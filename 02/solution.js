@@ -12,20 +12,24 @@ let totalRibbonLengthRequired = 0;
 const arrayOfBoxes = input.split('\n');
 let arrayOfBoxesDimensions = [];
 
-const calculateRequiredRibbon = (x, y, z) => {
-  const sorted = [x, y, z].sort((a, b) => a - b);
+const calculateRequiredRibbon = (length, width, height) => {
+  const sorted = [length, width, height].sort((a, b) => a - b);
   return (2 * sorted[0]) + (2 * sorted[1]) + (sorted[0] * sorted[1] * sorted[2]);
 };
+
+const calculateRequiredWrappingPaper = (length, width , height) => {
+  const x = 2 * (parseInt(length) * parseInt(width));
+  const y = 2 * (parseInt(width) * parseInt(height));
+  const z = 2 * (parseInt(height) * parseInt(length));
+  return x + y + z + Math.min(x, y, z) / 2;
+}
 
 for (let i = 0; i < arrayOfBoxes.length; i++) {
   arrayOfBoxesDimensions.push(arrayOfBoxes[i].split('x'));
 }
 
 for (let i = 0; i < arrayOfBoxesDimensions.length; i++) {
-  const val1 = 2 * (parseInt(arrayOfBoxesDimensions[i][0]) * parseInt(arrayOfBoxesDimensions[i][1]));
-  const val2 = 2 * (parseInt(arrayOfBoxesDimensions[i][1]) * parseInt(arrayOfBoxesDimensions[i][2]));
-  const val3 = 2 * (parseInt(arrayOfBoxesDimensions[i][2]) * parseInt(arrayOfBoxesDimensions[i][0]));
-  const totalInchesForThisBox = val1 + val2 + val3 + Math.min(val1, val2, val3) / 2;
+  const totalInchesForThisBox = calculateRequiredWrappingPaper(arrayOfBoxesDimensions[i][0], arrayOfBoxesDimensions[i][1], arrayOfBoxesDimensions[i][2]);
   totalInchesOfPresentPaper = totalInchesOfPresentPaper + totalInchesForThisBox;
   totalRibbonLengthRequired = totalRibbonLengthRequired + calculateRequiredRibbon(
       arrayOfBoxesDimensions[i][0],
