@@ -18,6 +18,7 @@ while (!foundSolution) {
 
   if (hash.substring(0, 5) === '00000') {
     foundSolution = true;
+    break;
   }
   iterator = iterator + 1;
 }
