@@ -8,17 +8,23 @@ const secretKey = fs.readFileSync('input.txt', 'utf-8', (input, err) => {
 });
 
 let iterator = 0;
+const findSecretNumber = stringToMatch => {
+  while (true) {
+    let hash = crypto
+      .createHash('md5')
+      .update(secretKey + iterator)
+      .digest('hex');
 
-while (true) {
-  let hash = crypto
-    .createHash('md5')
-    .update(secretKey + iterator)
-    .digest('hex');
-
-  if (hash.substring(0, 5) === '00000') {
-    break;
+    if (hash.substring(0, stringToMatch.length) === stringToMatch) {
+      return iterator;
+      break;
+    }
+    iterator++;
   }
-  iterator++;
-}
+};
 
-console.log(`The lowest positive number that, combined with the secret key, produces such a hash is: ${iterator}.`);
+console.log(
+  `Part 1 - The lowest positive number that, combined with the secret key, produces such a hash is:\n
+  '00000': ${findSecretNumber('00000')}.
+  '000000': ${findSecretNumber('000000')}.`
+);
