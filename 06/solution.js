@@ -9,10 +9,11 @@ const input = fs.readFileSync('input.txt', 'utf-8', (input, err) => {
 const instructions = input.split('\n');
 const cmdArray = [];
 
-var lightGrid = [];
-for (var i = 0; i < 1000; i++) {
-  lightGrid[i] = new Array(1000).fill(false);
-}
+const createGrid = fillWith =>
+  [...Array(1000)].map(() => Array(1000).fill(fillWith));
+
+var lightGrid1 = createGrid(false);
+var lightGrid2 = createGrid(0);
 
 const getInstructions = instruction => {
   if (instruction.substring(0, 7) === 'turn on') {
@@ -39,54 +40,44 @@ for (let i = 0; i < instructions.length; i++) {
   ]);
 }
 
-const turnOn = (l, t, r, b) => {
-  console.log(`Turning on ${l},${t} through ${r},${b}.`);
+const letThereBeLight = (instruction, l, t, r, b, part2 = false) => {
+  let grid = part2 !== true ? lightGrid1 : lightGrid2;
+  console.log(`${instruction} ${l},${t} through ${r},${b}.`);
   for (let x = l; x <= r; x++) {
     for (let y = t; y <= b; y++) {
-      lightGrid[x][y] = true;
+      switch (instruction) {
+        case 'turn on':
+          grid[x][y] = part2 !== true ? true : grid[x][y] + 1;
+          break;
+        case 'turn off':
+          grid[x][y] = part2 !== true ? false : Math.max(0, grid[x][y] - 1);
+          break;
+        case 'toggle':
+          grid[x][y] = part2 !== true ? !grid[x][y] : grid[x][y] + 2;
+          break;
+        default:
+          break;
+      }
     }
   }
 };
 
-const turnOff = (l, t, r, b) => {
-  console.log(`Turning off ${l},${t} through ${r},${b}.`);
-  for (let x = l; x <= r; x++) {
-    for (let y = t; y <= b; y++) {
-      lightGrid[x][y] = false;
-    }
-  }
-};
-
-const toggle = (l, t, r, b) => {
-  console.log(`Switching state on ${l},${t} through ${r},${b}.`);
-  for (let x = l; x <= r; x++) {
-    for (let y = t; y <= b; y++) {
-      lightGrid[x][y] = !lightGrid[x][y];
-    }
-  }
-};
-
-cmdArray.map(cmd => {
-  switch (cmd[0]) {
-    case 'turn on':
-      turnOn(cmd[1], cmd[2], cmd[3], cmd[4]);
-      break;
-    case 'turn off':
-      turnOff(cmd[1], cmd[2], cmd[3], cmd[4]);
-      break;
-    case 'toggle':
-      toggle(cmd[1], cmd[2], cmd[3], cmd[4]);
-      break;
-
-    default:
-      break;
-  }
+cmdArray.map((cmd, i) => {
+  letThereBeLight(cmd[0], cmd[1], cmd[2], cmd[3], cmd[4]);
+  letThereBeLight(cmd[0], cmd[1], cmd[2], cmd[3], cmd[4], true);
 });
 
 // Solution, part 1
-let lightsOn = 0;
-lightGrid.map(lightRow => {
-  lightsOn = lightsOn + lightRow.filter(Boolean).length;
+let lightsOn1 = 0;
+lightGrid1.map(lightRow => {
+  lightsOn1 = lightsOn1 + lightRow.filter(Boolean).length;
 });
 
-console.log(`\nAfter following the instructions, ${lightsOn} are on.`);
+// Solution, part 2
+let lightsOn2 = 0;
+lightGrid2.map(lightRow => {
+  lightsOn2 = lightsOn2 + lightRow.reduce((a, b) => a + b, 0);
+});
+
+console.log(`\nPart 1 - After following the instructions, ${lightsOn1} are on.`);
+console.log(`\nPart 2 - the total brightness of all lights combined after following Santa's instructions, is ${lightsOn2}.`);
