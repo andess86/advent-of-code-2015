@@ -29,14 +29,14 @@ const getInstructions = instruction => {
 for (let i = 0; i < instructions.length; i++) {
   let instruction = getInstructions(instructions[i]);
   let numbers = instructions[i].match(/\d+,\d+/g);
-  const leftTop = numbers[0].split(',');
-  const rightBottom = numbers[1].split(',');
+  const [left, top] = numbers[0].split(',');
+  const [right, bottom] = numbers[1].split(',');
   cmdArray.push([
     instruction,
-    parseInt(leftTop[0]),
-    parseInt(leftTop[1]),
-    parseInt(rightBottom[0]),
-    parseInt(rightBottom[1])
+    parseInt(left),
+    parseInt(top),
+    parseInt(right),
+    parseInt(bottom)
   ]);
 }
 
